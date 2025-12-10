@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import axios from 'axios';
+import { useState } from "react";
+import axios from "axios";
 import {
   TextField,
   IconButton,
@@ -9,56 +9,59 @@ import {
   InputAdornment,
   Snackbar,
   Alert,
-} from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
-import AttachFileIcon from '@mui/icons-material/AttachFile';
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { useParams } from "react-router-dom";
 
 export default function ChatBot() {
+  const { id } = useParams();
+  console.log('id', id)
   const [messages, setMessages] = useState<
     { sender: string; text: string; fileName?: string }[]
   >([]);
-  const [input, setInput] = useState('');
+  const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState('');
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [refreshKey, setRefreshKey] = useState(0);
 
   const sendMessage = async () => {
     if (!input.trim() && !file) return;
 
     const userMessage = {
-      sender: 'user',
-      text: input || '',
+      sender: "user",
+      text: input || "",
       fileName: file?.name || undefined,
     };
     setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+    setInput("");
     setLoading(true);
 
     const formData = new FormData();
-    formData.append('message', input);
+    formData.append("message", input);
     if (file) {
-      formData.append('file', file);
+      formData.append("file", file);
     }
-    // formData.forEach((value, key) => {
-    //   console.log(`${key}:`, value);
-    // });
 
     try {
       setFile(null);
       setRefreshKey(refreshKey + 1);
-      const response = await axios.post(`${import.meta.env.VITE_API_URL}/chat`, formData);
+      const response = await axios.post(
+        `${import.meta.env.VITE_API_URL}/chat`,
+        formData
+      );
 
       const aiMessage = {
-        sender: 'bot',
-        text: response.data || 'เกิดข้อผิดพลาด',
+        sender: "bot",
+        text: response.data || "เกิดข้อผิดพลาด",
       };
       setMessages((prev) => [...prev, aiMessage]);
     } catch (err) {
       setMessages((prev) => [
         ...prev,
-        { sender: 'bot', text: 'เกิดข้อผิดพลาดในการเชื่อมต่อ API', error: err },
+        { sender: "bot", text: "เกิดข้อผิดพลาดในการเชื่อมต่อ API", error: err },
       ]);
     } finally {
       setLoading(false);
@@ -66,21 +69,20 @@ export default function ChatBot() {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !loading) sendMessage();
-
+    if (e.key === "Enter" && !loading) sendMessage();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = e.target.files?.[0];
     if (
       selectedFile &&
-      ['application/pdf', 'image/png', 'image/jpeg'].includes(selectedFile.type)
+      ["application/pdf", "image/png", "image/jpeg"].includes(selectedFile.type)
     ) {
       setFile(selectedFile);
     } else {
-      setSnackbarMessage('อนุญาตเฉพาะไฟล์ PDF หรือรูปภาพเท่านั้น');
+      setSnackbarMessage("อนุญาตเฉพาะไฟล์ PDF หรือรูปภาพเท่านั้น");
       setSnackbarOpen(true);
-      e.target.value = '';
+      e.target.value = "";
     }
   };
 
@@ -88,7 +90,7 @@ export default function ChatBot() {
     _event?: React.SyntheticEvent | Event,
     reason?: string
   ) => {
-    if (reason === 'clickaway') return;
+    if (reason === "clickaway") return;
     setSnackbarOpen(false);
   };
 
@@ -103,10 +105,11 @@ export default function ChatBot() {
           {messages.map((msg, idx) => (
             <div
               key={idx}
-              className={`flex flex-col max-w-[50%] rounded-xl p-3 shadow-md transition-all duration-200 whitespace-pre-wrap ${msg.sender === 'user'
-                ? 'ml-auto bg-blue-600 text-white'
-                : 'mr-auto bg-white text-gray-800'
-                }`}
+              className={`flex flex-col max-w-[50%] rounded-xl p-3 shadow-md transition-all duration-200 whitespace-pre-wrap ${
+                msg.sender === "user"
+                  ? "ml-auto bg-blue-600 text-white"
+                  : "mr-auto bg-white text-gray-800"
+              }`}
             >
               {msg.fileName && (
                 <div className="text-sm italic text-gray-300 mb-2">
@@ -190,13 +193,13 @@ export default function ChatBot() {
         open={snackbarOpen}
         autoHideDuration={3000}
         onClose={handleSnackbarClose}
-        anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
           onClose={handleSnackbarClose}
           severity="warning"
           variant="filled"
-          sx={{ width: '100%' }}
+          sx={{ width: "100%" }}
         >
           {snackbarMessage}
         </Alert>

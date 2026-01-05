@@ -5,10 +5,14 @@ import tailwindcss from '@tailwindcss/vite'
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), tailwindcss()],
-  preview: {
-    allowedHosts: ['chatbot.archonnode.com']
-  },
   server: {
+    host: true,
+    port: 5173,
+    allowedHosts: ['chatbot.archonnode.com'] 
+  },
+  preview: {
+    host: true,
+    port: 5173,
     allowedHosts: ['chatbot.archonnode.com']
   }
 })

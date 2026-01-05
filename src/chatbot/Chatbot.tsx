@@ -12,11 +12,8 @@ import {
 } from "@mui/material";
 import SendIcon from "@mui/icons-material/Send";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
-import { useParams } from "react-router-dom";
 
 export default function ChatBot() {
-  const { id } = useParams();
-  console.log('id', id)
   const [messages, setMessages] = useState<
     { sender: string; text: string; fileName?: string }[]
   >([]);

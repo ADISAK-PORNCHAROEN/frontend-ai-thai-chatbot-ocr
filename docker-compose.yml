@@ -1,0 +1,22 @@
+services:
+  archon-frontend:
+    build:
+      context: .
+      args:
+        - VITE_API_URL=${VITE_API_URL}
+    container_name: archon-frontend
+    ports:
+      - "3005:5173"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 128M
+    networks:
+      - postgres_archon-network
+    restart: always
+
+networks:
+  postgres_archon-network:
+    external: true
